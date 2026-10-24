@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Time Machine — 5-Stage AI Trading Analysis Pipeline (Indian Markets &bull; NSE / BSE)</title>
+  <meta name="description" content="Interactive animated explainer visualizing a 5-stage AI trading-analysis pipeline for Indian equities: Scanner, News, Entry, Exit, and Time Machine Monte Carlo simulation on NSE / BSE.">
+
+  <!-- Typography: Inter, DM Sans, & JetBrains Mono with Indian Rupee symbol support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome for crisp vector icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- PERSISTENT TOP-RIGHT BADGE -->
+  <aside class="persistent-badge" aria-label="Simulation Status">
+    <div class="badge-indicator">
+      <span class="badge-dot"></span>
+      <span class="badge-label">EXAMPLE RUN</span>
+    </div>
+    <span class="badge-sub">NSE / BSE SIMULATION</span>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="app-layout">
+    
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="brand-group">
+          <div class="brand-iso-icon" aria-hidden="true">
+            <!-- Isometric miniature chart cube -->
+            <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+              <path d="M20 4L36 13.2376V26.7624L20 36L4 26.7624V13.2376L20 4Z" fill="#F4EFE6" stroke="#C4553F" stroke-width="2"/>
+              <path d="M20 4L36 13.2376L20 22.4752L4 13.2376L20 4Z" fill="#FAF6EE"/>
+              <path d="M4 13.2376L20 22.4752V36L4 26.7624V13.2376Z" fill="#E6DFCE"/>
+              <path d="M20 22.4752L36 13.2376V26.7624L20 36V22.4752Z" fill="#DDD5C0"/>
+              <!-- Mini isometric bars -->
+              <path d="M12 18V24" stroke="#2F6B3F" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M20 15V26" stroke="#C4553F" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M28 17V23" stroke="#3A4F7A" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">Trade Time Machine</h1>
+            <p class="brand-subtitle">5-Stage AI Trading Analysis &amp; Probabilistic Replay Pipeline &bull; Indian Markets (NSE / BSE)</p>
+          </div>
+        </div>
+
+        <!-- Secondary controls: Sound & Speed -->
+        <div class="header-actions">
+          <button id="soundToggleBtn" class="pill-btn-ghost" title="Toggle audio feedback" aria-label="Toggle Sound">
+            <i class="fa-solid fa-volume-xmark" id="soundIcon"></i>
+            <span class="btn-text">Sound: Off</span>
+          </button>
+          <div class="speed-selector" title="Simulation Speed">
+            <span class="speed-label">Speed:</span>
+            <button class="speed-chip active" data-speed="1">1x</button>
+            <button class="speed-chip" data-speed="1.5">1.5x</button>
+            <button class="speed-chip" data-speed="2">2x</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5-STAGE HORIZONTAL PIPELINE TABS -->
+      <nav class="pipeline-container" aria-label="Pipeline Stages Navigation">
+        <ol class="pipeline-track" id="pipelineTrack">
+          <!-- Stage 1 -->
+          <li class="pipeline-step active" data-stage="0" tabindex="0" role="button" aria-current="step">
+            <span class="step-num">01</span>
+            <span class="step-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+            <span class="step-name">Scanner</span>
+          </li>
+          <li class="pipeline-connector" aria-hidden="true">
+            <div class="connector-line"></div>
+          </li>
+
+          <!-- Stage 2 -->
+          <li class="pipeline-step" data-stage="1" tabindex="0" role="button">
+            <span class="step-num">02</span>
+            <span class="step-icon"><i class="fa-regular fa-newspaper"></i></span>
+            <span class="step-name">News</span>
+          </li>
+          <li class="pipeline-connector" aria-hidden="true">
+            <div class="connector-line"></div>
+          </li>
+
+          <!-- Stage 3 -->
+          <li class="pipeline-step" data-stage="2" tabindex="0" role="button">
+            <span class="step-num">03</span>
+            <span class="step-icon"><i class="fa-solid fa-crosshairs"></i></span>
+            <span class="step-name">Entry</span>
+          </li>
+          <li class="pipeline-connector" aria-hidden="true">
+            <div class="connector-line"></div>
+          </li>
+
+          <!-- Stage 4 -->
+          <li class="pipeline-step" data-stage="3" tabindex="0" role="button">
+            <span class="step-num">04</span>
+            <span class="step-icon"><i class="fa-solid fa-scale-balanced"></i></span>
+            <span class="step-name">Exit</span>
+          </li>
+          <li class="pipeline-connector" aria-hidden="true">
+            <div class="connector-line"></div>
+          </li>
+
+          <!-- Stage 5 -->
+          <li class="pipeline-step" data-stage="4" tabindex="0" role="button">
+            <span class="step-num">05</span>
+            <span class="step-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+            <span class="step-name">Time Machine</span>
+          </li>
+        </ol>
+      </nav>
+    </header>
+
+    <!-- MAIN STAGE DISPLAY CARD -->
+    <main class="main-card-wrapper">
+      <section class="stage-card" id="stageCard">
+
+        <!-- Stage Card Header Meta -->
+        <div class="stage-header">
+          <div class="stage-meta-left">
+            <span class="stage-badge-pill" id="stageBadge">STAGE 01 OF 05</span>
+            <h2 class="stage-heading" id="stageHeading">Market Scanner: 2,240 NSE Equities</h2>
+            <p class="stage-description" id="stageDesc">
+              Screening the NSE Nifty 500 &amp; universe of equities for high-volume momentum breakouts with compressed volatility.
+            </p>
+          </div>
+          <div class="stage-meta-right" id="stageMetaStats">
+            <div class="stat-pill">
+              <span class="stat-label">SCAN RATE</span>
+              <span class="stat-val" id="metaStatRate">1,200/s</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-label">STATUS</span>
+              <span class="stat-val highlight" id="metaStatStatus">Filtering</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE SCENE VIEWPORT -->
+        <div class="stage-viewport" id="stageViewport">
+
+          <!-- ============================================== -->
+          <!-- STAGE 1: SCANNER SCENE                        -->
+          <!-- ============================================== -->
+          <div class="stage-scene" id="sceneScanner" data-stage-index="0">
+            <div class="scanner-scene-grid">
+              
+              <!-- Left / Main: The Multi-Chart Matrix -->
+              <div class="scanner-matrix-container">
+                <div class="matrix-toolbar">
+                  <div class="scanner-live-pulse">
+                    <span class="pulse-indicator"></span>
+                    <span class="scan-matrix-status">SCANNING 2,240 NSE EQUITIES IN REAL-TIME</span>
+                  </div>
+                  <div class="matrix-filter-tag">Filter: Nifty 500 &bull; 20-EMA Breakout &amp; Vol &gt; 2.5x</div>
+                </div>
+
+                <div class="charts-grid" id="scannerChartsGrid">
+                  <!-- Injected via JavaScript (24 mini-candlestick charts with Indian tickers) -->
+                </div>
+
+                <!-- Laser scanning sweep bar -->
+                <div class="scanner-radar-line" id="scannerRadarLine"></div>
+              </div>
+
+              <!-- Right: Isometric Trader Desk & HUD -->
+              <aside class="scanner-sidebar">
+                <div class="iso-desk-card">
+                  <div class="iso-desk-visual" id="isoDeskGraphic">
+                    <!-- Clean Flat Isometric Illustration: Desk, Monitor, Succulent Plant, Charts -->
+                    <svg viewBox="0 0 260 210" width="100%" height="100%" class="iso-desk-svg" aria-label="Isometric Trader Desk">
+                      <defs>
+                        <linearGradient id="screenGlow" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#FAF6EE"/>
+                          <stop offset="100%" stop-color="#EEE6D5"/>
+                        </linearGradient>
+                        <filter id="deskShadow" x="-10%" y="-10%" width="130%" height="130%">
+                          <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#3A3025" flood-opacity="0.12"/>
+                        </filter>
+                      </defs>
+
+                      <!-- Desk Floor Shadow -->
+                      <ellipse cx="130" cy="180" rx="90" ry="22" fill="#3E342B" fill-opacity="0.08"/>
+
+                      <!-- Desk Surface (Isometric diamond) -->
+                      <g filter="url(#deskShadow)">
+                        <!-- Desk Legs -->
+                        <path d="M42 135 L42 170 L52 175 L52 140 Z" fill="#6A5F53"/>
+                        <path d="M218 135 L218 170 L208 175 L208 140 Z" fill="#7D7164"/>
+                        <path d="M130 178 L130 195 L140 190 L140 173 Z" fill="#584E43"/>
+
+                        <!-- Desk Board Side / Bevel -->
+                        <path d="M25 125 L130 175 L235 125 L235 133 L130 183 L25 133 Z" fill="#9C8D7C"/>
+                        <!-- Desk Top Face -->
+                        <path d="M130 80 L235 125 L130 175 L25 125 Z" fill="#CBBBAA"/>
+                      </g>
+
+                      <!-- Isometric Monitor Stand & Base -->
+                      <path d="M115 120 L145 106 L155 110 L125 124 Z" fill="#6A6258"/>
+                      <path d="M132 100 L138 100 L138 112 L132 112 Z" fill="#4E473F"/>
+
+                      <!-- Monitor Bezel & Screen -->
+                      <path d="M85 65 L180 30 L180 85 L85 120 Z" fill="#3D3A37"/>
+                      <path d="M88 67 L177 34 L177 82 L88 115 Z" fill="url(#screenGlow)" stroke="#C4553F" stroke-width="1.2"/>
+                      
+                      <!-- Mini chart on monitor screen -->
+                      <path d="M96 98 L112 88 L126 94 L142 66 L155 72 L168 50" stroke="#2F6B3F" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      <circle cx="168" cy="50" r="3" fill="#C4553F"/>
+
+                      <!-- Desk Plant (Pot + Succulent leaves) -->
+                      <g transform="translate(48, 98)">
+                        <!-- Pot -->
+                        <ellipse cx="14" cy="24" rx="9" ry="4" fill="#6A5A4A"/>
+                        <path d="M5 14 L23 14 L20 24 L8 24 Z" fill="#B36B51"/>
+                        <ellipse cx="14" cy="14" rx="9" ry="3.5" fill="#C87A5E"/>
+                        <!-- Leaves -->
+                        <path d="M14 13 C10 6, 2 8, 4 12 C6 14, 12 14, 14 13 Z" fill="#3D744E"/>
+                        <path d="M14 13 C18 6, 26 8, 24 12 C22 14, 16 14, 14 13 Z" fill="#2F6B3F"/>
+                        <path d="M14 13 C12 2, 16 2, 14 13 Z" fill="#4B8C5E"/>
+                      </g>
+
+                      <!-- Stacked Paper Charts on Desk -->
+                      <g transform="translate(178, 110)">
+                        <path d="M0 8 L18 0 L32 6 L14 14 Z" fill="#ECE6D8" stroke="#DDD4C0"/>
+                        <path d="M0 6 L18 -2 L32 4 L14 12 Z" fill="#F4EFE6" stroke="#DDD4C0"/>
+                        <path d="M0 4 L18 -4 L32 2 L14 10 Z" fill="#FFFFFF" stroke="#CBBBAA"/>
+                        <line x1="6" y1="2" x2="16" y2="-1" stroke="#C4553F" stroke-width="1"/>
+                        <line x1="8" y1="5" x2="22" y2="-1" stroke="#3A4F7A" stroke-width="1"/>
+                      </g>
+                    </svg>
+                  </div>
+
+                  <!-- Candidate Detection Info -->
+                  <div class="candidate-highlight-box">
+                    <div class="candidate-header">
+                      <span class="candidate-tag">PRIME SETUP IDENTIFIED</span>
+                      <span class="candidate-ticker">RELIANCE</span>
+                    </div>
+                    <div class="candidate-stats">
+                      <div class="c-stat">
+                        <span class="c-label">PATTERN</span>
+                        <span class="c-value">Bullish Flag Breakout</span>
+                      </div>
+                      <div class="c-stat">
+                        <span class="c-label">RELATIVE VOL</span>
+                        <span class="c-value text-win">3.4x 20-Day Avg</span>
+                      </div>
+                      <div class="c-stat">
+                        <span class="c-label">CONSOLIDATION</span>
+                        <span class="c-value">5-Day Squeeze at ₹2,845</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STAGE 2: NEWS SENTIMENT SCENE                  -->
+          <!-- ============================================== -->
+          <div class="stage-scene" id="sceneNews" data-stage-index="1">
+            <div class="news-scene-grid">
+              
+              <!-- Left: Pinned Chart from Stage 1 -->
+              <div class="pinned-chart-pane">
+                <div class="pane-header">
+                  <div class="ticker-identity">
+                    <span class="ticker-symbol">RELIANCE</span>
+                    <span class="ticker-name">Reliance Industries Ltd &bull; NSE</span>
+                  </div>
+                  <span class="locked-badge"><i class="fa-solid fa-lock"></i> TARGET LOCKED</span>
+                </div>
+                <div class="pinned-chart-canvas-wrap">
+                  <canvas id="pinnedChartCanvas" width="380" height="240"></canvas>
+                  <div class="chart-tech-overlay">
+                    <span class="badge-tech"><i class="fa-solid fa-chart-line"></i> Breakout Candle: ₹2,845.00</span>
+                  </div>
+                </div>
+                <!-- Aggregated AI Sentiment Gauge -->
+                <div class="sentiment-summary-card">
+                  <div class="gauge-header">
+                    <span class="gauge-title">AI NLP SENTIMENT COMPOSITE</span>
+                    <span class="gauge-score text-win">+78% Bullish</span>
+                  </div>
+                  <div class="sentiment-meter-bar">
+                    <div class="meter-fill" id="sentimentMeterFill" style="width: 78%;"></div>
+                  </div>
+                  <div class="meter-labels">
+                    <span>Bearish (-100%)</span>
+                    <span>Neutral (0%)</span>
+                    <span class="text-win">Bullish (+100%)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Sliding News Cards & Entity Sentiment Extraction -->
+              <div class="news-feed-pane">
+                <div class="feed-header">
+                  <h3 class="feed-title"><i class="fa-regular fa-newspaper"></i> Live Wire Catalysts &amp; Indian Market Wire</h3>
+                  <span class="feed-count">3 Feeds Analyzed</span>
+                </div>
+
+                <div class="news-cards-stack" id="newsCardsStack">
+                  <!-- News Item 1: Positive -->
+                  <article class="news-card card-positive" data-index="0">
+                    <div class="news-card-header">
+                      <span class="sentiment-tag tag-positive">
+                        <i class="fa-solid fa-arrow-trend-up"></i> POSITIVE (+0.88)
+                      </span>
+                      <span class="news-source">The Economic Times &bull; 14m ago</span>
+                    </div>
+                    <h4 class="news-headline">Jio &amp; Retail Drive Reliance Q2 EBITDA Up 16.5% YoY; 5G Monetization Accelerates</h4>
+                    <p class="news-snippet">Strong subscriber additions in telecom and accelerated retail floor expansions drive operational beat; green energy gigafactory commissioning ahead of target.</p>
+                    <div class="news-nlp-tags">
+                      <span class="nlp-pill">Entity: Jio/Retail</span>
+                      <span class="nlp-pill">Impact: High Positive</span>
+                      <span class="nlp-pill">Confidence: 96%</span>
+                    </div>
+                  </article>
+
+                  <!-- News Item 2: Neutral -->
+                  <article class="news-card card-neutral" data-index="1">
+                    <div class="news-card-header">
+                      <span class="sentiment-tag tag-neutral">
+                        <i class="fa-solid fa-minus"></i> NEUTRAL (0.00)
+                      </span>
+                      <span class="news-source">Moneycontrol Pro &bull; 42m ago</span>
+                    </div>
+                    <h4 class="news-headline">RBI MPC Holds Repo Rate Steady at 6.50%; Projects FY India GDP Growth at 7.2%</h4>
+                    <p class="news-snippet">Governor Shaktikanta Das highlights resilient domestic economic fundamentals and steady credit growth, keeping financial market liquidity balanced.</p>
+                    <div class="news-nlp-tags">
+                      <span class="nlp-pill">Macro: RBI MPC</span>
+                      <span class="nlp-pill">Repo Rate: 6.50%</span>
+                      <span class="nlp-pill">Market Vol: Normal</span>
+                    </div>
+                  </article>
+
+                  <!-- News Item 3: Negative / Caution -->
+                  <article class="news-card card-negative" data-index="2">
+                    <div class="news-card-header">
+                      <span class="sentiment-tag tag-negative">
+                        <i class="fa-solid fa-triangle-exclamation"></i> RISK NOTICE (-0.24)
+                      </span>
+                      <span class="news-source">Livemint Financial &bull; 1h ago</span>
+                    </div>
+                    <h4 class="news-headline">Brent Crude Edges Near $85/bbl on Global Supply Curbs; Downstream Margins In Focus</h4>
+                    <p class="news-snippet">Temporary firming in global crude benchmarks creates minor near-term margin headwind for oil-to-chemicals segment, though offset by petrochemical spreads.</p>
+                    <div class="news-nlp-tags">
+                      <span class="nlp-pill">Factor: Crude Price</span>
+                      <span class="nlp-pill">Absorbed: Yes</span>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STAGE 3: ENTRY STRATEGY SCENE                  -->
+          <!-- ============================================== -->
+          <div class="stage-scene" id="sceneEntry" data-stage-index="2">
+            <div class="entry-scene-layout">
+              
+              <!-- Candlestick Chart with animated drawing -->
+              <div class="entry-chart-viewport">
+                <div class="chart-top-bar">
+                  <div class="chart-pair-info">
+                    <span class="chart-symbol">RELIANCE</span>
+                    <span class="chart-timeframe">5-Min Chart &bull; NSE Regular Trading Hours (09:15 - 15:30 IST)</span>
+                  </div>
+                  <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-dot green"></span> Bull Candle</span>
+                    <span class="legend-item"><span class="legend-dot red"></span> Bear Candle</span>
+                    <span class="legend-item"><span class="legend-line terracotta"></span> Entry Trigger Line</span>
+                  </div>
+                </div>
+
+                <div class="chart-canvas-container" id="entryChartContainer">
+                  <canvas id="entryCanvas" width="860" height="340"></canvas>
+                  
+                  <!-- Floating Trigger Callout Badge -->
+                  <div class="entry-line-badge" id="entryLineBadge">
+                    <div class="badge-arrow"></div>
+                    <div class="badge-title">NSE ENTRY TRIGGER LEVEL</div>
+                    <div class="badge-price">₹2,845.00</div>
+                    <div class="badge-sub">Confirmed on 5m Candle Close &gt; Pivot</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Technical Confirmation Parameters -->
+              <div class="entry-details-grid">
+                <div class="param-box">
+                  <span class="param-label">TRIGGER PRICE</span>
+                  <span class="param-val highlight">₹2,845.00</span>
+                  <span class="param-note">Break above consolidation pivot</span>
+                </div>
+                <div class="param-box">
+                  <span class="param-label">NSE VOLUME FILTER</span>
+                  <span class="param-val">Volume &gt; 2.5x</span>
+                  <span class="param-note">Institutional DII/FII accumulation</span>
+                </div>
+                <div class="param-box">
+                  <span class="param-label">ORDER TYPE</span>
+                  <span class="param-val">SL-Limit Order</span>
+                  <span class="param-note">Zero slippage protection on NSE</span>
+                </div>
+                <div class="param-box">
+                  <span class="param-label">POSITION SIZING</span>
+                  <span class="param-val">100 Shares</span>
+                  <span class="param-note">₹2.84L capital &bull; Risk capped at 1.0%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STAGE 4: EXIT BRACKETS SCENE                   -->
+          <!-- ============================================== -->
+          <div class="stage-scene" id="sceneExit" data-stage-index="3">
+            <div class="exit-scene-layout">
+              
+              <!-- Chart showing Take Profit Zone and Stop Loss Zone -->
+              <div class="exit-chart-viewport">
+                <div class="chart-top-bar">
+                  <div class="chart-pair-info">
+                    <span class="chart-symbol">RELIANCE</span>
+                    <span class="chart-timeframe">NSE Bracket Zones Activated</span>
+                  </div>
+                  <div class="chart-legend">
+                    <span class="legend-zone green">Take Profit (+₹150.00)</span>
+                    <span class="legend-line terracotta">Entry (₹2,845.00)</span>
+                    <span class="legend-zone red">Stop Loss (-₹60.00)</span>
+                  </div>
+                </div>
+
+                <div class="chart-canvas-container" id="exitChartContainer">
+                  <canvas id="exitCanvas" width="860" height="340"></canvas>
+
+                  <!-- Dynamic Visual Bracket Overlay -->
+                  <div class="bracket-tag target-tag" id="targetTag">
+                    <span class="tag-title"><i class="fa-solid fa-arrow-trend-up"></i> TAKE PROFIT</span>
+                    <span class="tag-price">₹2,995.00</span>
+                    <span class="tag-delta text-win">+5.27% (+₹150.00)</span>
+                  </div>
+
+                  <div class="bracket-tag entry-tag" id="exitEntryTag">
+                    <span class="tag-title">ENTRY</span>
+                    <span class="tag-price">₹2,845.00</span>
+                  </div>
+
+                  <div class="bracket-tag stop-tag" id="stopTag">
+                    <span class="tag-title"><i class="fa-solid fa-shield"></i> STOP LOSS</span>
+                    <span class="tag-price">₹2,785.00</span>
+                    <span class="tag-delta text-loss">-2.11% (-₹60.00)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Risk/Reward Ratio & Mathematical Breakdown -->
+              <div class="exit-metrics-strip">
+                <div class="rr-feature-card">
+                  <span class="rr-title">RISK / REWARD RATIO</span>
+                  <div class="rr-ratio-number">
+                    <span class="risk-part">1</span>
+                    <span class="colon">:</span>
+                    <span class="reward-part text-win">2.50</span>
+                  </div>
+                  <span class="rr-verdict">Favorable Asymmetry (&gt; 2.0 Benchmark)</span>
+                </div>
+
+                <div class="bracket-math-card">
+                  <div class="math-row">
+                    <span class="m-label">Potential Upside (Per Share):</span>
+                    <span class="m-val text-win">+₹150.00</span>
+                  </div>
+                  <div class="math-row">
+                    <span class="m-label">Max Risk Exposure (Per Share):</span>
+                    <span class="m-val text-loss">-₹60.00</span>
+                  </div>
+                  <div class="math-row total">
+                    <span class="m-label">Total Trade Risk Exposure:</span>
+                    <span class="m-val">₹6,000.00 (100 shares position)</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STAGE 5: TIME MACHINE HERO SCENE               -->
+          <!-- ============================================== -->
+          <div class="stage-scene" id="sceneTimeMachine" data-stage-index="4">
+            <div class="time-machine-layout">
+              
+              <!-- Hero Stage Top Header Counter -->
+              <div class="tm-hero-banner">
+                <div class="tm-counter-block">
+                  <div class="tm-counter-display">
+                    <span class="counter-number" id="replayCounter">0</span>
+                    <span class="counter-plus">+</span>
+                  </div>
+                  <span class="counter-caption">replays of the rest of the trading session</span>
+                </div>
+                <div class="tm-hero-desc">
+                  Monte Carlo stochastic paths simulating NSE order book depth, volatility spikes, and intraday Indian market dynamics.
+                </div>
+              </div>
+
+              <!-- Central Canvas & 3D Isometric Bar Visualization -->
+              <div class="tm-visualization-grid">
+                
+                <!-- Left: Canvas with 10,000 Translucent Simulation Paths -->
+                <div class="tm-canvas-card">
+                  <div class="canvas-header-strip">
+                    <div class="strip-left">
+                      <span class="status-live-dot"></span>
+                      <span class="strip-title">10,000 Stochastic NSE Monte Carlo Paths</span>
+                    </div>
+                    <div class="strip-right">
+                      <span class="mode-badge" id="simPhaseBadge">Fanning Out...</span>
+                    </div>
+                  </div>
+
+                  <div class="monte-carlo-wrap">
+                    <canvas id="timeMachineCanvas" width="560" height="340"></canvas>
+
+                    <!-- Horizontal Boundary Markers -->
+                    <div class="canvas-h-line line-target" id="simLineTarget" style="top: 24%;">
+                      <span class="h-label" id="simLabelTarget">Target ₹2,995.00</span>
+                    </div>
+                    <div class="canvas-h-line line-entry" id="simLineEntry" style="top: 55%;">
+                      <span class="h-label" id="simLabelEntry">Entry ₹2,845.00</span>
+                    </div>
+                    <div class="canvas-h-line line-stop" id="simLineStop" style="top: 82%;">
+                      <span class="h-label" id="simLabelStop">Stop ₹2,785.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Stacked 3D Isometric Paper Bar Towers -->
+                <div class="tm-towers-card">
+                  <div class="towers-header">
+                    <h3 class="towers-title">Probabilistic Resolution</h3>
+                    <span class="towers-sub">Stacked 3D Paper Towers</span>
+                  </div>
+
+                  <!-- 3D Isometric SVG Container -->
+                  <div class="isometric-towers-viewport" id="isometricTowersWrap">
+                    <svg id="isoTowersSvg" viewBox="0 0 320 280" width="100%" height="280">
+                      <!-- Rendered dynamically by app.js -->
+                    </svg>
+                  </div>
+
+                  <!-- Tower Legend & Live Percentages -->
+                  <div class="towers-legend-list">
+                    <!-- Green: Hit Target -->
+                    <div class="legend-card win-card">
+                      <div class="lc-top">
+                        <span class="lc-color-box win"></span>
+                        <span class="lc-name">Hit Target</span>
+                        <span class="lc-percent" id="pctWin">29.4%</span>
+                      </div>
+                      <div class="lc-count" id="countWin">2,940 paths</div>
+                    </div>
+
+                    <!-- Red: Hit Stop -->
+                    <div class="legend-card loss-card">
+                      <div class="lc-top">
+                        <span class="lc-color-box loss"></span>
+                        <span class="lc-name">Hit Stop</span>
+                        <span class="lc-percent" id="pctLoss">21.2%</span>
+                      </div>
+                      <div class="lc-count" id="countLoss">2,120 paths</div>
+                    </div>
+
+                    <!-- Blue: Neither -->
+                    <div class="legend-card neither-card">
+                      <div class="lc-top">
+                        <span class="lc-color-box neither"></span>
+                        <span class="lc-name">Neither (3:30 PM IST Close)</span>
+                        <span class="lc-percent" id="pctNeither">49.4%</span>
+                      </div>
+                      <div class="lc-count" id="countNeither">4,940 paths</div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Interactive Controls & Outcome Summary -->
+              <div class="tm-controls-and-outcomes">
+                
+                <!-- Tiny Interactive Control Panel -->
+                <div class="tm-control-panel">
+                  <div class="panel-header">
+                    <span class="panel-title"><i class="fa-solid fa-sliders"></i> Interactive Parameter Adjuster (INR ₹)</span>
+                    <button class="btn-rerun" id="rerunSimBtn">
+                      <i class="fa-solid fa-rotate-right"></i>
+                      <span>Re-run 10,000 replays</span>
+                    </button>
+                  </div>
+
+                  <div class="sliders-grid">
+                    <!-- Slider: Entry -->
+                    <div class="slider-group">
+                      <div class="slider-meta">
+                        <label for="sliderEntry">Entry Price (₹)</label>
+                        <span class="slider-val" id="valEntry">₹2,845.00</span>
+                      </div>
+                      <input type="range" id="sliderEntry" min="2750" max="2950" step="5" value="2845">
+                    </div>
+
+                    <!-- Slider: Stop Loss -->
+                    <div class="slider-group">
+                      <div class="slider-meta">
+                        <label for="sliderStop">Stop Loss (₹)</label>
+                        <span class="slider-val text-loss" id="valStop">₹2,785.00</span>
+                      </div>
+                      <input type="range" id="sliderStop" min="2680" max="2840" step="5" value="2785">
+                    </div>
+
+                    <!-- Slider: Target -->
+                    <div class="slider-group">
+                      <div class="slider-meta">
+                        <label for="sliderTarget">Take Profit (₹)</label>
+                        <span class="slider-val text-win" id="valTarget">₹2,995.00</span>
+                      </div>
+                      <input type="range" id="sliderTarget" min="2850" max="3150" step="5" value="2995">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Simulation Outcome Summary Metrics -->
+                <div class="tm-outcomes-summary">
+                  <div class="outcome-metric">
+                    <span class="om-label">EXPECTED VALUE (EV)</span>
+                    <span class="om-val text-win" id="valEV">+₹14,250.00</span>
+                    <span class="om-sub">Per 100 shares traded</span>
+                  </div>
+                  <div class="outcome-metric">
+                    <span class="om-label">WIN / LOSS RATIO</span>
+                    <span class="om-val" id="valWLRatio">1.39 : 1</span>
+                    <span class="om-sub">Target hits vs Stop hits</span>
+                  </div>
+                  <div class="outcome-metric">
+                    <span class="om-label">SIMULATED PROFIT FACTOR</span>
+                    <span class="om-val highlight" id="valProfitFactor">1.82</span>
+                    <span class="om-sub">Gross Wins / Gross Losses</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </main>
+
+    <!-- BOTTOM PLAYBACK CONTROLS & TIMELINE -->
+    <footer class="bottom-timeline-bar">
+      <div class="timeline-controls-row">
+        
+        <!-- Navigation Buttons -->
+        <div class="nav-btn-group">
+          <button id="prevStageBtn" class="ctl-btn" title="Previous Stage (Left Arrow)" aria-label="Previous Stage">
+            <i class="fa-solid fa-chevron-left"></i>
+            <span>Prev</span>
+          </button>
+          
+          <button id="playPauseBtn" class="ctl-btn ctl-btn-primary" title="Play / Pause Auto-Advance (Spacebar)" aria-label="Play or Pause">
+            <i class="fa-solid fa-pause" id="playPauseIcon"></i>
+            <span id="playPauseText">Pause</span>
+          </button>
+
+          <button id="nextStageBtn" class="ctl-btn" title="Next Stage (Right Arrow)" aria-label="Next Stage">
+            <span>Next</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Stage Timeline Indicators -->
+        <div class="stage-timeline-info">
+          <span class="timeline-current-label" id="timelineStageLabel">Stage 1 of 5: Scanner</span>
+          <span class="timeline-hint"><kbd>Space</kbd> Pause &bull; <kbd>&larr;</kbd><kbd>&rarr;</kbd> Navigate</span>
+        </div>
+
+      </div>
+
+      <!-- Linear Countdown Progress Bar -->
+      <div class="timeline-progress-track" aria-hidden="true">
+        <div class="timeline-progress-fill" id="timelineProgressFill"></div>
+      </div>
+    </footer>
+
+    <!-- EDUCATIONAL DISCLAIMER FOOTER -->
+    <footer class="app-disclaimer-footer">
+      <p class="disclaimer-text">
+        <i class="fa-solid fa-circle-info"></i>
+        <strong>Educational simulation using example data. Not financial advice. Not SEBI registered investment advice. Securities trading involves market risk. No guaranteed profits.</strong>
+        All Monte Carlo paths, technical indicators, and news feeds are synthetic representations designed for conceptual demonstration.
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- Audio elements generated dynamically via Web Audio API in app.js -->
+  <script src="app.js"></script>
+</body>
+</html>
